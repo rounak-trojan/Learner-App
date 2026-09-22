@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Bulk Add Learners{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Bulk Add Learners</h1>
+  <div class="csv-help">
+    Required columns: <code>city</code>, <code>centre_name</code>, <code>center_uid</code>,
+    <code>name</code>, <code>luid</code>, <code>roll_no</code>, <code>email</code>,
+    <code>google_drive_video_link</code>.
+    Header row required, any column order. The Drive link must be shared as
+    <strong>"Anyone with the link"</strong> — a private or restricted link cannot be fetched
+    without a signed-in session, which this server doesn't hold. Each video is downloaded,
+    run through the same face-detection pipeline as a single enrollment, then discarded.
+    The <code>email</code> address is where the attendance notification is sent every time
+    that learner's face is scanned.
+    <br><br>
+    <a href="{{ url_for('learner_csv_template') }}">Download sample CSV template</a>
+  </div>
+
+  <form id="bulk-form">
+    <label>CSV File</label>
+    <input type="file" id="csv-file" name="csv_file" accept=".csv" required>
+    <button type="submit" id="start-btn">Upload &amp; Process</button>
+  </form>
+</div>
+
+<div id="progress-wrap" class="progress-wrap" style="display:none;">
+  <h2>Import Progress</h2>
+  <div class="progress-track">
+    <div id="progress-fill" class="progress-fill" style="width:0%;"></div>
+  </div>
+  <div class="progress-meta">
+    <span id="progress-count">0 / 0</span>
+    <span id="progress-counts-ok" class="pill">0 success</span>
+    <span id="progress-counts-fail" class="pill" style="color: var(--danger);">0 errors</span>
+  </div>
+  <a id="download-btn" class="btn btn-secondary" style="display:none;">Download Results CSV</a>
+</div>
+
+<div id="results-wrap" style="display:none;">
+  <h2>Results</h2>
+  <div class="table-scroll">
+  <table class="data-table">
+    <thead><tr><th>Row</th><th>Learner</th><th>Status</th><th>Detail</th></tr></thead>
+    <tbody id="results-body"></tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const form = document.getElementById("bulk-form");
+const csvFile = document.getElementById("csv-file");
+const startBtn = document.getElementById("start-btn");
+const progressWrap = document.getElementById("progress-wrap");
+const progressFill = document.getElementById("progress-fill");
+const progressCount = document.getElementById("progress-count");
+const okPill = document.getElementById("progress-counts-ok");
+const failPill = document.getElementById("progress-counts-fail");
+const downloadBtn = document.getElementById("download-btn");
+const resultsWrap = document.getElementById("results-wrap");
+const resultsBody = document.getElementById("results-body");
+
+let pollTimer = null;
+
+function renderResults(results) {
+  resultsBody.innerHTML = "";
+  for (const r of results) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${r.row}</td>
+      <td>${r.label}</td>
+      <td><span class="badge ${r.ok ? 'badge-ok' : 'badge-fail'}">${r.ok ? 'OK' : 'FAILED'}</span></td>
+      <td>${r.message}</td>`;
+    resultsBody.appendChild(tr);
+  }
+  resultsWrap.style.display = results.length ? "" : "none";
+}
+
+async function poll(jobId) {
+  try {
+    const resp = await fetch(`/admin/learners/bulk/progress/${jobId}`);
+    const data = await resp.json();
+    if (data.error) {
+      clearInterval(pollTimer);
+      alert(data.error);
+      return;
+    }
+    const pct = data.total ? Math.round((data.processed / data.total) * 100) : 0;
+    progressFill.style.width = pct + "%";
+    progressCount.textContent = `${data.processed} / ${data.total} uploaded`;
+    okPill.textContent = `${data.ok_count} success`;
+    failPill.textContent = `${data.error_count} errors`;
+    renderResults(data.results);
+
+    if (data.done) {
+      clearInterval(pollTimer);
+      startBtn.disabled = false;
+      startBtn.textContent = "Upload & Process";
+      downloadBtn.style.display = "";
+      downloadBtn.href = `/admin/learners/bulk/download/${jobId}`;
+    }
+  } catch (err) {
+    clearInterval(pollTimer);
+    alert("Lost connection while checking progress: " + err.message);
+  }
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!csvFile.files.length) return;
+
+  startBtn.disabled = true;
+  startBtn.textContent = "Starting…";
+  progressWrap.style.display = "";
+  resultsWrap.style.display = "none";
+  downloadBtn.style.display = "none";
+  progressFill.style.width = "0%";
+  progressCount.textContent = "0 / 0 uploaded";
+  okPill.textContent = "0 success";
+  failPill.textContent = "0 errors";
+
+  const fd = new FormData();
+  fd.append("csv_file", csvFile.files[0]);
+
+  try {
+    const resp = await fetch("/admin/learners/bulk/start", { method: "POST", body: fd });
+    const data = await resp.json();
+    if (data.error) {
+      alert(data.error);
+      startBtn.disabled = false;
+      startBtn.textContent = "Upload & Process";
+      return;
+    }
+    progressCount.textContent = `0 / ${data.total} uploaded`;
+    startBtn.textContent = "Processing…";
+    pollTimer = setInterval(() => poll(data.job_id), 1200);
+    poll(data.job_id);
+  } catch (err) {
+    alert("Could not start import: " + err.message);
+    startBtn.disabled = false;
+    startBtn.textContent = "Upload & Process";
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Center Login{% endblock %}
+{% block content %}
+<div class="form-wrap">
+  <h1>Center Login</h1>
+  <p class="hint">Sign in with your center's registered Syncup email. This scopes the scanner to your center's learners only.</p>
+  <form method="POST">
+    <label>Syncup Email</label>
+    <input type="email" name="syncup_email" required autofocus placeholder="center@syncup.org">
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <button type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}

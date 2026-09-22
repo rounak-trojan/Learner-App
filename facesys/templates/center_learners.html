@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Learner Details{% endblock %}
+{% block content %}
+<h1>Learner Details</h1>
+<p class="hint">Edits here update the same record Admin sees, and vice versa.</p>
+
+<form method="GET" class="filter-row">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search name / LUID / roll no">
+  <select name="batch">
+    <option value="">All batches</option>
+    {% for b in batches %}
+    <option value="{{ b }}" {{ 'selected' if b == batch_filter }}>{{ b }}</option>
+    {% endfor %}
+  </select>
+  <select name="active">
+    <option value="">All learners</option>
+    <option value="1" {{ 'selected' if active_filter == '1' }}>Active only</option>
+    <option value="0" {{ 'selected' if active_filter == '0' }}>Inactive only</option>
+  </select>
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+
+<div class="actions-row">
+  <a class="btn btn-secondary btn-sm" href="{{ url_for('export_learner_details') }}">⬇ Learner Details CSV</a>
+  <a class="btn btn-secondary btn-sm" href="{{ url_for('export_attendance') }}">⬇ Attendance Detail CSV</a>
+  <a class="btn btn-secondary btn-sm" href="{{ url_for('export_learner_tests') }}">⬇ Test Detail CSV</a>
+</div>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>Name</th><th>LUID</th><th>Roll No</th><th>Batch Name</th><th>Active</th><th></th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.name }}</td>
+      <td>{{ r.luid }}</td>
+      <td>{{ r.roll_no }}</td>
+      <td>{{ r.batch_name or '' }}</td>
+      <td>
+        <label class="switch">
+          <input type="checkbox" class="active-toggle" data-luid="{{ r.luid }}" {{ 'checked' if r.active }}>
+          <span class="slider"></span>
+        </label>
+      </td>
+      <td><button type="button" class="btn btn-sm btn-secondary show-more-btn" data-luid="{{ r.luid }}">Show More</button></td>
+      <td><a class="btn btn-sm btn-secondary" href="{{ url_for('edit_learner_center', luid=r.luid) }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="empty">No learners match these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="modal-overlay" id="learner-modal-overlay">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="modal-close-btn">✕</button>
+    <div id="modal-body">Loading…</div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/center_learners.js') }}"></script>
+{% endblock %}

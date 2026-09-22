@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Attendance Log{% endblock %}
+{% block content %}
+<h1>Attendance Log</h1>
+
+<form method="GET" class="filter-row">
+  <input type="date" name="from" value="{{ date_from }}">
+  <input type="date" name="to" value="{{ date_to }}">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search name or roll no">
+  <button type="submit" class="btn btn-secondary">Filter</button>
+  <a class="btn" href="{{ url_for('export_attendance', **request.args) }}">Export CSV</a>
+</form>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>Name</th><th>Roll No</th><th>LUID</th><th>Type</th><th>Timestamp</th><th>Confidence</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    {% for row in logs %}
+    <tr>
+      <td>{{ row.name }}</td>
+      <td>{{ row.roll_no }}</td>
+      <td>{{ row.luid }}</td>
+      <td><span class="badge {{ 'badge-ok' if row.punch_type == 'login' else 'badge-fail' }}">{{ row.punch_type|capitalize }}</span></td>
+      <td>{{ row.ts }}</td>
+      <td>{{ "%.2f"|format(row.confidence) }}</td>
+      <td><span class="badge badge-{{ row.status }}">{{ row.status }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="empty">No attendance records match this filter.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

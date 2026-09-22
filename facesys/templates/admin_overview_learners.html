@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Learner Dashboard{% endblock %}
+{% block content %}
+<h1>Learner Dashboard</h1>
+
+<form method="GET" class="filter-row">
+  <select name="city">
+    <option value="">All cities</option>
+    {% for c in cities %}
+    <option value="{{ c }}" {{ 'selected' if c == city }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <select name="center_uid">
+    <option value="">All centers</option>
+    {% for c in centers %}
+    <option value="{{ c.center_uid }}" {{ 'selected' if c.center_uid == center_uid }}>{{ c.centre_name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>City</th><th>Center</th><th>Active Learner</th><th>Total Batch Allotted</th></tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.city }}</td>
+      <td>{{ r.centre_name }}</td>
+      <td>{{ r.active_learners }}</td>
+      <td>{{ r.total_batches }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty">No centers match these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

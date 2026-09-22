@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Test Result{% endblock %}
+{% block content %}
+<h1>Test Result</h1>
+<p class="hint">Each test's subject-wise sections are shown side by side, with the total across them.</p>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>Test Title</th><th>Date</th><th>Attempt Type</th><th>Sections (Score)</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    {% for t in tests %}
+    <tr>
+      <td>{{ t.test_title or '-' }}</td>
+      <td>{{ t.test_start_date or '-' }}</td>
+      <td>{{ t.attempt_type or '-' }}</td>
+      <td>
+        <div class="test-sections">
+          {% for s in t.sections %}
+          <span class="test-section-chip">{{ s.name }}: {{ s.score }}</span>
+          {% endfor %}
+        </div>
+      </td>
+      <td><strong>{{ t.total }}</strong></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="empty">No test results yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ learner.name }} — Attendance{% endblock %}
+{% block content %}
+<a href="{{ url_for('center_learners') }}" class="hint" style="display:inline-block; margin-bottom:12px;">&larr; Back to Learner Details</a>
+<h1>{{ learner.name }}'s Attendance</h1>
+<p class="hint">LUID {{ learner.luid }} · Roll No {{ learner.roll_no }}</p>
+
+<form method="GET" class="filter-row" style="max-width:720px; margin:0 auto 16px;">
+  <select name="month" onchange="this.form.submit()">
+    {% for m in range(1, 13) %}
+    <option value="{{ m }}" {{ 'selected' if m == month }}>{{ ['','January','February','March','April','May','June','July','August','September','October','November','December'][m] }}</option>
+    {% endfor %}
+  </select>
+  <select name="year" onchange="this.form.submit()">
+    {% for y in range(year - 3, year + 2) %}
+    <option value="{{ y }}" {{ 'selected' if y == year }}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="cal-nav">
+  <a class="btn btn-sm btn-secondary" href="{{ url_for('center_learner_attendance', luid=learner.luid, year=prev_year, month=prev_month) }}">&larr; Prev</a>
+  <h2>{{ month_name }} {{ year }}</h2>
+  <a class="btn btn-sm btn-secondary" href="{{ url_for('center_learner_attendance', luid=learner.luid, year=next_year, month=next_month) }}">Next &rarr;</a>
+</div>
+
+<div class="cal-grid">
+  {% for dow in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+  <div class="cal-dow">{{ dow }}</div>
+  {% endfor %}
+
+  {% for week in weeks %}
+    {% for day in week %}
+      {% if day == 0 %}
+      <div class="cal-cell empty"></div>
+      {% else %}
+      {% set key = "%02d"|format(day) %}
+      {% set entry = by_day.get(key) %}
+      {% set cell_date = "%04d-%02d-%02d"|format(year, month, day) %}
+      <div class="cal-cell {{ 'today' if cell_date == today_iso }}">
+        <div class="cal-daynum">{{ day }}</div>
+        {% if entry %}
+          {% if entry.login %}<span class="cal-time login">In {{ entry.login }}</span>{% endif %}
+          {% if entry.logout %}<span class="cal-time logout">Out {{ entry.logout }}</span>{% endif %}
+        {% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+</div>
+{% endblock %}

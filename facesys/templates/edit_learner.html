@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Edit Learner{% endblock %}
+{% block content %}
+<div class="form-wrap">
+  <h1>Edit Learner</h1>
+  <p class="hint">
+    LUID cannot be changed: <strong>{{ learner.luid }}</strong>. Changes here update the record for both
+    Admin and Center views — they're the same record.
+  </p>
+  <form method="POST">
+    <label>Learner Name</label>
+    <input type="text" name="name" value="{{ learner.name }}" required>
+
+    <label>Roll No</label>
+    <input type="text" name="roll_no" value="{{ learner.roll_no }}" required>
+
+    <label>Learner Email</label>
+    <input type="email" name="email" value="{{ learner.email or '' }}" placeholder="parent-or-learner@example.com">
+
+    {% if is_admin %}
+    <label>Centre</label>
+    <select name="center_uid" required>
+      {% for c in centers %}
+      <option value="{{ c.center_uid }}" {{ 'selected' if c.center_uid == learner.center_uid }}>
+        {{ c.center_uid }} — {{ c.centre_name }}
+      </option>
+      {% endfor %}
+    </select>
+    {% else %}
+    <label>Centre</label>
+    <input type="text" value="{{ learner.center_uid }}" disabled>
+    {% endif %}
+
+    <button type="submit">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

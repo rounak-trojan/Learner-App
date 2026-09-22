@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Add Learner{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Add Learner</h1>
+  <p class="hint">
+    Enroll a learner's face using an uploaded video, a Google Drive link, or the live
+    camera scanner below. The email is used to notify on every attendance punch — a
+    message is sent the moment the face scan marks them present.
+    Enrolling many learners at once from Google Drive links? Use
+    <a href="{{ url_for('bulk_add_learners') }}">Bulk Learners (CSV)</a> instead.
+  </p>
+  <form method="POST" enctype="multipart/form-data">
+    <label>City</label>
+    <input type="text" name="city" required>
+
+    <label>Centre Name</label>
+    <input type="text" name="centre_name" required>
+
+    <label>Centre</label>
+    <select name="center_uid" required>
+      <option value="">-- select center --</option>
+      {% for c in centers %}
+      <option value="{{ c.center_uid }}">{{ c.center_uid }} — {{ c.centre_name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Learner Name</label>
+    <input type="text" name="name" required>
+
+    <label>LUID</label>
+    <input type="text" name="luid" required placeholder="Unique learner ID">
+
+    <label>Roll No</label>
+    <input type="text" name="roll_no" required>
+
+    <label>Learner Email</label>
+    <input type="email" name="email" required placeholder="parent-or-learner@example.com">
+
+    <h2 style="margin-top:28px;">Face Enrollment</h2>
+    <div class="scanner-tabs" style="margin:0 0 16px;">
+      <button type="button" class="tab-btn enroll-tab-btn active" data-source="file">Upload File</button>
+      <button type="button" class="tab-btn enroll-tab-btn" data-source="drive">Drive Link</button>
+      <button type="button" class="tab-btn enroll-tab-btn" data-source="camera">Live Camera</button>
+    </div>
+
+    <div id="panel-file">
+      <label>Learner Video</label>
+      <input type="file" name="video" accept="video/*">
+      <p class="hint" style="margin:6px 0 0;">A short video with the learner's face clearly visible.</p>
+    </div>
+
+    <div id="panel-drive" style="display:none;">
+      <label>Google Drive Link</label>
+      <input type="text" name="drive_link" placeholder="https://drive.google.com/file/d/.../view?usp=sharing">
+      <p class="hint" style="margin:6px 0 0;">The Drive file must be shared as "Anyone with the link".</p>
+    </div>
+
+    <div id="panel-camera" style="display:none;">
+      {% include "_face_register_scanner.html" %}
+    </div>
+
+    <button type="submit" id="main-submit-btn">Process &amp; Enroll</button>
+  </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/face_register.js') }}"></script>
+{% endblock %}

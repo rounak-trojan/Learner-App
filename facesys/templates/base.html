@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Unacademy{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script>
+  // Applied before paint so there's no light/dark flash on load.
+  (function () {
+    var saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      document.documentElement.setAttribute("data-theme", saved);
+    }
+  })();
+</script>
+{% block head %}{% endblock %}
+</head>
+<body>
+
+{% if session.get('is_admin') or session.get('center_uid') or session.get('learner_luid') %}
+<button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle menu">&#9776;</button>
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/unacademy-logo.png') }}" alt="Unacademy" class="brand-logo"></a>
+
+  {% if session.get('is_admin') and session.get('admin_role') == 'full' %}
+  <div class="side-section-label">Admin</div>
+  <nav class="side-nav">
+    <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('list_learners_admin') }}" class="{{ 'active' if request.endpoint in ('list_learners_admin', 'edit_learner_admin') }}">Learners</a>
+    <a href="{{ url_for('admin_reports') }}" class="{{ 'active' if request.endpoint == 'admin_reports' }}">Attendance Reports</a>
+    <a href="{{ url_for('admin_feedback_responses') }}" class="{{ 'active' if request.endpoint == 'admin_feedback_responses' }}">Feedback Responses</a>
+    <div class="side-section-label">Overview Dashboards</div>
+    <a href="{{ url_for('admin_overview_attendance') }}" class="{{ 'active' if request.endpoint == 'admin_overview_attendance' }}">Attendance Dashboard</a>
+    <a href="{{ url_for('admin_overview_nps') }}" class="{{ 'active' if request.endpoint == 'admin_overview_nps' }}">NPS Report</a>
+    <a href="{{ url_for('admin_overview_learners') }}" class="{{ 'active' if request.endpoint == 'admin_overview_learners' }}">Learner Dashboard</a>
+    <div class="side-section-label">Add</div>
+    <a href="{{ url_for('add_center') }}" class="{{ 'active' if request.endpoint == 'add_center' }}">+ Add Center</a>
+    <a href="{{ url_for('add_learner') }}" class="{{ 'active' if request.endpoint == 'add_learner' }}">+ Add Learner</a>
+    <div class="side-section-label">Bulk Import</div>
+    <a href="{{ url_for('bulk_add_centers') }}" class="{{ 'active' if request.endpoint == 'bulk_add_centers' }}">Bulk Centers (CSV)</a>
+    <a href="{{ url_for('bulk_add_learners') }}" class="{{ 'active' if request.endpoint == 'bulk_add_learners' }}">Bulk Learners (CSV)</a>
+    <div class="side-section-label">Data Dumps</div>
+    <a href="{{ url_for('admin_atlas') }}" class="{{ 'active' if request.endpoint == 'admin_atlas' }}">Atlas Dump</a>
+    <a href="{{ url_for('admin_test_dump') }}" class="{{ 'active' if request.endpoint == 'admin_test_dump' }}">Test Dump</a>
+    <a href="{{ url_for('admin_nps_dump') }}" class="{{ 'active' if request.endpoint == 'admin_nps_dump' }}">NPS Dump</a>
+    <a href="{{ url_for('admin_attendance_dump') }}" class="{{ 'active' if request.endpoint == 'admin_attendance_dump' }}">Attendance Dump</a>
+  </nav>
+  <div class="side-bottom">
+    <button id="theme-toggle" class="theme-toggle" type="button">🌙 Theme</button>
+    <a href="{{ url_for('admin_logout') }}">Logout</a>
+  </div>
+
+  {% elif session.get('is_admin') %}
+  <div class="side-section-label">Overview</div>
+  <nav class="side-nav">
+    <a href="{{ url_for('admin_overview_attendance') }}" class="{{ 'active' if request.endpoint == 'admin_overview_attendance' }}">Attendance Dashboard</a>
+    <a href="{{ url_for('admin_overview_nps') }}" class="{{ 'active' if request.endpoint == 'admin_overview_nps' }}">NPS Report</a>
+    <a href="{{ url_for('admin_overview_learners') }}" class="{{ 'active' if request.endpoint == 'admin_overview_learners' }}">Learner Dashboard</a>
+  </nav>
+  <div class="side-bottom">
+    <button id="theme-toggle" class="theme-toggle" type="button">🌙 Theme</button>
+    <a href="{{ url_for('admin_logout') }}">Logout</a>
+  </div>
+
+
+  {% elif session.get('center_uid') %}
+  <div class="side-section-label">{{ session.get('center_name') }}</div>
+  <nav class="side-nav">
+    <a href="{{ url_for('center_dashboard') }}" class="{{ 'active' if request.endpoint == 'center_dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('scanner') }}" class="{{ 'active' if request.endpoint == 'scanner' }}">Scanner</a>
+    <a href="{{ url_for('center_add_learner') }}" class="{{ 'active' if request.endpoint == 'center_add_learner' }}">+ Add Learner</a>
+    <a href="{{ url_for('center_learners') }}" class="{{ 'active' if request.endpoint in ('center_learners', 'edit_learner_center') }}">Learner Details</a>
+    <a href="{{ url_for('attendance') }}" class="{{ 'active' if request.endpoint == 'attendance' }}">Attendance Log</a>
+    <a href="{{ url_for('center_nps') }}" class="{{ 'active' if request.endpoint == 'center_nps' }}">NPS Report</a>
+    <a href="{{ url_for('center_reports') }}" class="{{ 'active' if request.endpoint == 'center_reports' }}">Reports</a>
+  </nav>
+  <div class="side-bottom">
+    <button id="theme-toggle" class="theme-toggle" type="button">🌙 Theme</button>
+    <a href="{{ url_for('center_logout') }}">Logout</a>
+  </div>
+
+  {% elif session.get('learner_luid') %}
+  <div class="side-section-label">{{ session.get('learner_name') }}</div>
+  <nav class="side-nav">
+    <a href="{{ url_for('learner_dashboard') }}" class="{{ 'active' if request.endpoint == 'learner_dashboard' }}">My Details</a>
+    <a href="{{ url_for('learner_attendance') }}" class="{{ 'active' if request.endpoint == 'learner_attendance' }}">Attendance</a>
+    <a href="{{ url_for('learner_tests') }}" class="{{ 'active' if request.endpoint == 'learner_tests' }}">Test Result</a>
+    <a href="{{ url_for('learner_nps') }}" class="{{ 'active' if request.endpoint == 'learner_nps' }}">NPS Report</a>
+    <a href="{{ url_for('learner_feedback') }}" class="{{ 'active' if request.endpoint == 'learner_feedback' }}">Feedback</a>
+  </nav>
+  <div class="side-bottom">
+    <button id="theme-toggle" class="theme-toggle" type="button">🌙 Theme</button>
+    <a href="{{ url_for('learner_logout') }}">Logout</a>
+  </div>
+  {% endif %}
+</aside>
+{% else %}
+<header class="topbar-guest">
+  <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/unacademy-logo.png') }}" alt="Unacademy" class="brand-logo"></a>
+  <div class="topbar-guest-right">
+    <div class="dropdown">
+      <button type="button" class="dropdown-toggle">Staff Login ▾</button>
+      <div class="dropdown-menu">
+        <a href="{{ url_for('admin_login') }}">Admin Login</a>
+        <a href="{{ url_for('center_login') }}">Center Login</a>
+      </div>
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button">🌙 Theme</button>
+  </div>
+</header>
+{% endif %}
+
+<main class="container {{ 'with-sidebar' if session.get('is_admin') or session.get('center_uid') or session.get('learner_luid') }}">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<script>
+  const toggle = document.getElementById("sidebar-toggle");
+  const sidebar = document.getElementById("sidebar");
+  if (toggle && sidebar) {
+    toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+  }
+
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    function currentTheme() {
+      return document.documentElement.getAttribute("data-theme") || "dark";
+    }
+    themeToggle.textContent = currentTheme() === "light" ? "☀️ Theme" : "🌙 Theme";
+    themeToggle.addEventListener("click", () => {
+      const next = currentTheme() === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      themeToggle.textContent = next === "light" ? "☀️ Theme" : "🌙 Theme";
+    });
+  }
+
+  const ddToggle = document.querySelector(".dropdown-toggle");
+  const dd = document.querySelector(".dropdown");
+  if (ddToggle && dd) {
+    ddToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dd.classList.toggle("open");
+    });
+    document.addEventListener("click", () => dd.classList.remove("open"));
+  }
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

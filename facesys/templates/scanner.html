@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Scanner{% endblock %}
+{% block content %}
+<h1>Attendance Scanner</h1>
+<p class="hint">
+  Face the camera — works for one learner or a group standing together (up to ~2m back).
+  Choose Login or Logout mode below, then press Start to begin scanning. Keep the room
+  lit evenly and the camera lens clean; low light and dirty/foggy lenses are the two things
+  no amount of software enhancement can fully fix.
+</p>
+
+<div class="scanner-tabs">
+  <button type="button" class="tab-btn active" data-mode="login">Login</button>
+  <button type="button" class="tab-btn" data-mode="logout">Logout</button>
+</div>
+
+<div class="scanner-layout">
+  <div class="scanner-wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div id="result-panel" class="result-panel result-idle">
+      <div id="result-icon">📷</div>
+      <div id="result-text">Waiting for camera…</div>
+    </div>
+
+    <div class="scanner-controls">
+      <button id="toggle-btn" class="btn">Start Scanning</button>
+    </div>
+  </div>
+
+  <aside class="recent-box">
+    <h3 id="recent-title">Last 10 — Logged In</h3>
+    <div id="recent-log"></div>
+  </aside>
+</div>
+
+<script src="{{ url_for('static', filename='js/scanner.js') }}"></script>
+{% endblock %}

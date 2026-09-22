@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}NPS Report{% endblock %}
+{% block content %}
+<h1>NPS Report</h1>
+<p class="hint">Each category shows Like% / Dislike% of that category's like+dislike responses (blank "none" responses aren't counted in the percentage).</p>
+
+<form method="GET" class="filter-row">
+  <select name="city">
+    <option value="">All cities</option>
+    {% for c in cities %}
+    <option value="{{ c }}" {{ 'selected' if c == city }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <select name="center_uid">
+    <option value="">All centers</option>
+    {% for c in centers %}
+    <option value="{{ c.center_uid }}" {{ 'selected' if c.center_uid == center_uid }}>{{ c.centre_name }}</option>
+    {% endfor %}
+  </select>
+  <input type="date" name="from" value="{{ date_from }}">
+  <input type="date" name="to" value="{{ date_to }}">
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>City</th><th>Center</th><th>NPS Rating</th>
+      <th>App &amp; Technology</th><th>Class Recording</th><th>Staff Co-operation</th>
+      <th>Study Material</th><th>Tests</th><th>Quality of Educators</th>
+      <th>Syllabus Progress</th><th>Centre Facilities Cleanliness</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.city }}</td>
+      <td>{{ r.centre_name }}</td>
+      <td><strong>{{ r.nps_rating }}</strong></td>
+      {% for f in r.flags %}
+      <td>{{ f.like_pct }}% / {{ f.dislike_pct }}%</td>
+      {% endfor %}
+    </tr>
+    {% else %}
+    <tr><td colspan="11" class="empty">No centers match these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Attendance Dump{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Attendance Dump</h1>
+  <div class="csv-help">
+    Upload a login/logout correction CSV (city_name, centre_name, centre_uid, learner_uid,
+    roll_number, <code>Day of dates</code>, log_in_time, log_out_time).
+    <br><br>
+    <strong>This overrides, not merges:</strong> for every (learner, date) in the file, any
+    attendance already on record for that learner on that day — whether captured by the face
+    scanner or a previous dump — is replaced with exactly what this file says for that day.
+    A row with only a log-in or only a log-out still fully replaces that day's record for that
+    learner. Rows for a <code>learner_uid</code> not enrolled in this system are skipped.
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label>CSV File</label>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload &amp; Apply</button>
+  </form>
+</div>
+
+<h2>Upload History</h2>
+<div class="upload-history">
+  {% for u in uploads %}
+  <div class="upload-history-row">
+    <span>Upload #{{ u.id }} — {{ u.days_updated }} learner-day(s) updated{% if u.skipped %}, {{ u.skipped }} skipped{% endif %}</span>
+    <span class="muted">{{ u.uploaded_at }}</span>
+  </div>
+  {% else %}
+  <div class="upload-history-row"><span class="muted">No Attendance dump uploaded yet.</span></div>
+  {% endfor %}
+</div>
+{% endblock %}

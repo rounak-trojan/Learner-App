@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}NPS Report{% endblock %}
+{% block content %}
+<h1>NPS Report</h1>
+<p class="hint">Feedback recorded against your account from the center's NPS survey.</p>
+
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Date</th><th>Rating</th><th>Review</th>
+      <th>App &amp; Tech</th><th>Class Recording</th><th>Staff Co-op</th><th>Study Material</th>
+      <th>Tests</th><th>Quality of Educators</th><th>Syllabus Progress</th><th>Centre Facilities</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.feedback_date or '-' }}</td>
+      <td>{{ r.rating or '-' }}</td>
+      <td>{{ r.feedback_review or '-' }}</td>
+      <td>{{ r.flag_app_tech or '-' }}</td>
+      <td>{{ r.flag_class_recording or '-' }}</td>
+      <td>{{ r.flag_staff_cooperation or '-' }}</td>
+      <td>{{ r.flag_study_material or '-' }}</td>
+      <td>{{ r.flag_tests or '-' }}</td>
+      <td>{{ r.flag_quality_educators or '-' }}</td>
+      <td>{{ r.flag_syllabus_progress or '-' }}</td>
+      <td>{{ r.flag_centre_facilities or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="11" class="empty">No NPS feedback recorded yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

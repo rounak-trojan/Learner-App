@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Test Dump{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Test Dump</h1>
+  <div class="csv-help">
+    Upload the Test result export CSV (Learner ID, Learner UID, Learner Name, Roll no, Test UID,
+    Test Title, Test Start Date, Course Name, Course UID, Test Score, Attempt type, Rank on score,
+    Learner Test start/end at, Learner Batch UID/Name, Centre Name, Learner Center UID, Center City,
+    Section Name, Total Ques attempted, Section Score). Rows without a Learner UID are skipped.
+    <br><br>
+    <strong>Retention:</strong> only the 3 most recent uploads are kept. Uploading a 4th permanently
+    deletes the oldest of the previous 3.
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label>CSV File</label>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload &amp; Overwrite</button>
+  </form>
+</div>
+
+<h2>Upload History</h2>
+<div class="upload-history">
+  {% for u in uploads %}
+  <div class="upload-history-row">
+    <span>Upload #{{ u.id }} — {{ u.row_count }} rows</span>
+    <span class="muted">{{ u.uploaded_at }}</span>
+  </div>
+  {% else %}
+  <div class="upload-history-row"><span class="muted">No Test dump uploaded yet.</span></div>
+  {% endfor %}
+</div>
+{% endblock %}

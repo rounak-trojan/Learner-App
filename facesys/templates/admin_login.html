@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<div class="form-wrap">
+  <h1>Admin Login</h1>
+  <form method="POST">
+    <label>Username</label>
+    <input type="text" name="username" required autofocus>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <button type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}

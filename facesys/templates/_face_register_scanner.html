@@ -1,0 +1,26 @@
+<div class="scanner-wrap" style="max-width:520px; margin:0;">
+  <video id="reg-video" autoplay playsinline muted></video>
+  <canvas id="reg-canvas" style="display:none;"></canvas>
+
+  <div class="result-panel result-idle" style="margin-top:12px;">
+    <div id="reg-icon" style="font-size:22px;">🎥</div>
+    <div style="flex:1;">
+      <div id="reg-stage-label" style="font-weight:600;">Ready to scan</div>
+      <div id="reg-instruction" style="font-size:13px; color:var(--text-dim); margin-top:2px;">
+        Press "Start Face Scan" and follow the prompts — front, left, then right.
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-wrap" style="max-width:520px; margin:10px 0 0;">
+    <div class="progress-track"><div id="reg-progress-fill" class="progress-fill" style="width:0%;"></div></div>
+  </div>
+
+  <div class="scanner-controls">
+    <button type="button" id="reg-start-btn" class="btn">Start Face Scan</button>
+    <button type="button" id="reg-retake-btn" class="btn btn-secondary" style="display:none;">Retake</button>
+  </div>
+
+  <p id="reg-status" class="hint" style="margin-top:10px; margin-bottom:0;"></p>
+</div>
+<input type="file" name="capture_frames_file" id="capture_frames_file" accept="application/json" style="display:none;">

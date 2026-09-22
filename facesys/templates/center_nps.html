@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}NPS Report{% endblock %}
+{% block content %}
+<h1>NPS Report</h1>
+
+<form method="GET" class="filter-row">
+  <input type="date" name="from" value="{{ date_from }}">
+  <input type="date" name="to" value="{{ date_to }}">
+  <select name="rating">
+    <option value="">All ratings</option>
+    {% for star in ['5','4','3','2','1'] %}
+    <option value="{{ star }}" {{ 'selected' if star == rating_filter }}>{{ star }} ★</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ summary.total }}</span><span>Feedback Given</span></div>
+  <div class="stat-box"><span class="stat-num">{{ summary.unique_learners }}</span><span>Unique Learners</span></div>
+  <div class="stat-box"><span class="stat-num">{{ nps_rating }}</span><span>NPS Rating (total rating ÷ {{ total_feedback }} feedback given)</span></div>
+</div>
+
+<h2>Rating Distribution</h2>
+<div class="stat-row">
+  {% for star in ['5','4','3','2','1'] %}
+  <div class="stat-box"><span class="stat-num">{{ summary.rating_counts[star] }}</span><span>{{ star }} ★</span></div>
+  {% endfor %}
+</div>
+
+<h2>Category Feedback</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Category</th><th>Like</th><th>Dislike</th><th>None</th></tr></thead>
+  <tbody>
+    {% for f in summary.flags %}
+    <tr><td>{{ f.label }}</td><td>{{ f.like }}</td><td>{{ f.dislike }}</td><td>{{ f.none }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Individual Responses</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Date</th><th>Learner</th><th>Rating</th><th>Review</th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.feedback_date or '-' }}</td>
+      <td>{{ r.learner_name }}</td>
+      <td>{{ r.rating or '-' }}</td>
+      <td>{{ r.feedback_review or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty">No NPS responses in this range.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}NPS Dump{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>NPS Dump</h1>
+  <div class="csv-help">
+    Upload the NPS export CSV (Date of Feedback, city_name, centre_name, Category, version,
+    learner_uid, learner_id, learner_name, learner_user_name, state_name, First Feedback Flag,
+    Feedback Platform, feedback_review, rating, and the 8 category flag columns). Rows without a
+    <code>learner_uid</code> are skipped.
+    <br><br>
+    Unlike Atlas/Test dumps, NPS uploads are <strong>not</strong> rotated — full history is kept so
+    the NPS Report can be filtered by any date range.
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label>CSV File</label>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload</button>
+  </form>
+</div>
+
+<h2>Upload History</h2>
+<div class="upload-history">
+  {% for u in uploads %}
+  <div class="upload-history-row">
+    <span>Upload #{{ u.id }} — {{ u.row_count }} responses</span>
+    <span class="muted">{{ u.uploaded_at }}</span>
+  </div>
+  {% else %}
+  <div class="upload-history-row"><span class="muted">No NPS dump uploaded yet.</span></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Unacademy | Learner Attendance & Journey Tracker{% endblock %}
+{% block content %}
+<div class="landing">
+  <div class="landing-hero">
+    <img src="{{ url_for('static', filename='img/unacademy-logo.png') }}" alt="Unacademy" class="landing-logo">
+    <span class="brand-pill">LEARNER ATTENDANCE &amp; JOURNEY TRACKER</span>
+    <h1>One place for every learner's<br>attendance, tests and progress.</h1>
+    <p class="subtitle">
+      Built for Unacademy centers — face-recognition attendance captured the moment a
+      learner walks in, test scores tracked section by section, and feedback that keeps
+      every center at its best.
+    </p>
+  </div>
+
+  <div class="landing-features">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="18" r="9" fill="var(--accent)"/>
+          <path d="M8 40c0-8.8 7.2-14 16-14s16 5.2 16 14" stroke="var(--accent-2)" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="14" y="6" width="20" height="4" rx="2" fill="var(--accent-2)" opacity="0.6"/>
+        </svg>
+      </div>
+      <h3>Face Attendance</h3>
+      <p>A quick face scan at the center logs each learner in and out — no registers, no manual entry.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="10" width="36" height="32" rx="4" stroke="var(--accent)" stroke-width="3" fill="none"/>
+          <path d="M6 18h36" stroke="var(--accent)" stroke-width="3"/>
+          <path d="M14 6v8M34 6v8" stroke="var(--accent-2)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="28" r="2.5" fill="var(--accent-2)"/>
+          <circle cx="24" cy="28" r="2.5" fill="var(--accent-2)"/>
+          <circle cx="16" cy="35" r="2.5" fill="var(--accent-2)"/>
+        </svg>
+      </div>
+      <h3>Attendance Calendar</h3>
+      <p>Every learner can look back at a month-by-month record of exactly when they checked in and out.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 40V26M18 40V16M28 40V22M38 40V8" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="38" cy="8" r="3" fill="var(--accent-2)"/>
+        </svg>
+      </div>
+      <h3>Learner Journey</h3>
+      <p>Batch, goal and enrollment details, plus every test score — section-wise — in one dashboard.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 6l5.5 11.2 12.3 1.8-8.9 8.7 2.1 12.3L24 34l-11 6 2.1-12.3-8.9-8.7 12.3-1.8L24 6z" fill="var(--accent-2)"/>
+        </svg>
+      </div>
+      <h3>NPS &amp; Feedback</h3>
+      <p>A quick, private feedback loop so every center can see how its learners really feel.</p>
+    </div>
+  </div>
+
+  <p class="landing-footnote">Staff can sign in from the Staff Login menu above.</p>
+</div>
+{% endblock %}

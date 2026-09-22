@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Atlas Dump{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Atlas Dump</h1>
+  <div class="csv-help">
+    Upload the Atlas export CSV. Only <code>batch_name</code>, <code>centre_city_name</code>,
+    <code>centre_name</code>, <code>goal_name</code>, <code>learner_name</code>, <code>learner_uid</code>
+    and <code>roll_number</code> are used — other columns are ignored. If a <code>learner_uid</code>
+    appears more than once in the file, the row with a non-blank <code>batch_name</code> is kept;
+    a learner appearing only once is kept as-is even if blank.
+    <br><br>
+    <strong>Retention:</strong> only the 3 most recent uploads are kept. Uploading a 4th permanently
+    deletes the oldest of the previous 3.
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label>CSV File</label>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload &amp; Overwrite</button>
+  </form>
+</div>
+
+<h2>Upload History</h2>
+<div class="upload-history">
+  {% for u in uploads %}
+  <div class="upload-history-row">
+    <span>Upload #{{ u.id }} — {{ u.row_count }} learners</span>
+    <span class="muted">{{ u.uploaded_at }}</span>
+  </div>
+  {% else %}
+  <div class="upload-history-row"><span class="muted">No Atlas dump uploaded yet.</span></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Give Feedback</h1>
+
+  {% if not can_submit %}
+  <div class="banner-warn">
+    You've already submitted feedback recently. You can submit again on <strong>{{ next_allowed }}</strong>
+    (once every {{ cooldown_days }} days).
+  </div>
+  {% else %}
+  <p class="hint">Your response is private — only visible to Unacademy admin, never to your center.</p>
+  {% endif %}
+
+  <form method="POST" id="feedback-form">
+    <label>Overall Rating</label>
+    <div class="star-rating" id="star-rating">
+      {% for i in range(1, 6) %}
+      <span class="star" data-value="{{ i }}">★</span>
+      {% endfor %}
+    </div>
+    <input type="hidden" name="rating" id="rating-input" value="0">
+
+    <label style="margin-top:24px;">How was your experience with each of these?</label>
+    <div class="flag-list">
+      {% for key, label in [
+        ('app_tech', 'App and Technology'), ('class_recording', 'Class Recording'),
+        ('staff_cooperation', 'Staff Co-operation'), ('study_material', 'Study Material'),
+        ('tests', 'Tests'), ('quality_educators', 'Quality of Educators'),
+        ('syllabus_progress', 'Syllabus Progress'), ('centre_facilities', 'Centre Facilities Cleanliness')
+      ] %}
+      <div class="flag-row" data-key="{{ key }}">
+        <span class="flag-label">{{ label }}</span>
+        <div class="flag-btns">
+          <button type="button" class="flag-btn like" title="Like">👍</button>
+          <button type="button" class="flag-btn dislike" title="Dislike">👎</button>
+        </div>
+      </div>
+      <input type="hidden" name="flag_{{ key }}" id="flag_{{ key }}" value="">
+      {% endfor %}
+    </div>
+
+    <label>Remarks (optional)</label>
+    <textarea name="remark" rows="4" placeholder="Anything you'd like us to know?" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; font-size:14px;"></textarea>
+
+    <button type="submit" {{ 'disabled' if not can_submit }}>Submit Feedback</button>
+  </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/learner_feedback.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Center Dashboard{% endblock %}
+{% block content %}
+<h1>{{ session.get('center_name') }}</h1>
+
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ stats.total_learners }}</span><span>Enrolled Learners</span></div>
+  <div class="stat-box"><span class="stat-num">{{ stats.present_today }}</span><span>Present Today</span></div>
+  <div class="stat-box"><span class="stat-num">{{ stats.total_learners - stats.present_today }}</span><span>Absent Today</span></div>
+</div>
+
+<div class="actions-row">
+  <a class="btn" href="{{ url_for('scanner') }}">Open Scanner</a>
+  <a class="btn btn-secondary" href="{{ url_for('center_add_learner') }}">+ Add Learner</a>
+  <a class="btn btn-secondary" href="{{ url_for('attendance') }}">View Attendance Log</a>
+  <a class="btn btn-secondary" href="{{ url_for('center_reports') }}">Reports</a>
+  <a class="btn btn-secondary" href="{{ url_for('center_nps') }}">NPS Report</a>
+</div>
+
+<div class="dash-grid">
+  <div class="panel-box">
+    <h2 style="margin-top:0;">Today vs Total Learners</h2>
+    <div class="chart-wrap">
+      <canvas id="attendance-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="panel-box">
+    <h2 style="margin-top:0;">Today's Punches (Live)</h2>
+    <div class="table-scroll" style="max-height:320px;">
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Roll No</th><th>Type</th><th>Time</th></tr></thead>
+      <tbody>
+        {% for row in today_logs %}
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.roll_no }}</td>
+          <td><span class="badge {{ 'badge-ok' if row.punch_type == 'login' else 'badge-fail' }}">{{ row.punch_type|capitalize }}</span></td>
+          <td>{{ row.ts }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">No punches yet today.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<h2>Learner Attendance — Today</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>Name</th><th>Roll No</th><th>Status</th><th>Login Time</th><th>Logout Time</th></tr>
+  </thead>
+  <tbody>
+    {% for p in presence %}
+    <tr>
+      <td>{{ p.name }}</td>
+      <td>{{ p.roll_no }}</td>
+      <td><span class="badge {{ 'badge-ok' if p.present else 'badge-fail' }}">{{ 'Present' if p.present else 'Absent' }}</span></td>
+      <td>{{ p.login_ts or '-' }}</td>
+      <td>{{ p.logout_ts or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="empty">No learners enrolled at this center yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  const ctx = document.getElementById("attendance-chart");
+  const isLight = (document.documentElement.getAttribute("data-theme") || "dark") === "light";
+  const gridColor = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)";
+  const textColor = isLight ? "#3a3f4c" : "#8c96ad";
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Total Learners", "Present Today"],
+      datasets: [{
+        data: [{{ stats.total_learners }}, {{ stats.present_today }}],
+        backgroundColor: ["#4f7cff", "#2ecc71"],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { display: false } },
+        y: { beginAtZero: true, ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+      }
+    }
+  });
+</script>
+{% endblock %}
+{% endblock %}

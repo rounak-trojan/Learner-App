@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Add Center{% endblock %}
+{% block content %}
+<div class="form-wrap">
+  <h1>Add Center</h1>
+  <p class="hint">Adding more than one? Use <a href="{{ url_for('bulk_add_centers') }}">Bulk Centers (CSV)</a> instead.</p>
+  <form method="POST">
+    <label>City</label>
+    <input type="text" name="city" required>
+
+    <label>Centre Name</label>
+    <input type="text" name="centre_name" required>
+
+    <label>Centre UID</label>
+    <input type="text" name="center_uid" required placeholder="e.g. CTR-DEL-001">
+
+    <label>Syncup Email</label>
+    <input type="email" name="syncup_email" required placeholder="Login email for this center">
+
+    <label>Password</label>
+    <input type="password" name="password" required minlength="6" placeholder="Min 6 characters — used for center login">
+
+    <label>App Password (SMTP) — optional</label>
+    <input type="text" name="app_password" placeholder="e.g. abcd efgh ijkl mnop">
+    <p class="hint" style="margin:6px 0 0;">
+      When set, attendance emails for this center's learners are sent from the Syncup email above using
+      this app password, instead of the system's default mail account. Can be added or changed later from
+      the dashboard.
+    </p>
+
+    <button type="submit">Save Center</button>
+  </form>
+</div>
+{% endblock %}

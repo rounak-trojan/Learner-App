@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Details{% endblock %}
+{% block content %}
+<h1>My Details</h1>
+
+{% if not atlas %}
+<div class="banner-warn">⚠️ Your subscription has expired or no course data is linked to your account yet. Contact your center for help.</div>
+{% endif %}
+
+<div class="table-scroll">
+<table class="data-table">
+  <tbody>
+    <tr><th style="width:220px;">Learner Name</th><td>{{ learner.name }}</td></tr>
+    <tr><th>LUID</th><td>{{ learner.luid }}</td></tr>
+    <tr><th>Roll No</th><td>{{ learner.roll_no }}</td></tr>
+    <tr><th>Goal</th><td>{{ atlas.goal_name if atlas and atlas.goal_name else '' }}</td></tr>
+    <tr><th>Batch Name</th><td>{{ atlas.batch_name if atlas and atlas.batch_name else '' }}</td></tr>
+    <tr><th>Centre Name</th><td>{{ atlas.centre_name if atlas and atlas.centre_name else '' }}</td></tr>
+    <tr><th>City</th><td>{{ atlas.centre_city_name if atlas and atlas.centre_city_name else '' }}</td></tr>
+  </tbody>
+</table>
+</div>
+{% endblock %}

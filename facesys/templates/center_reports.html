@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+
+<h2>1. Learner Details Report</h2>
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ learner_report.total }}</span><span>Total Learners</span></div>
+  <div class="stat-box"><span class="stat-num">{{ learner_report.active }}</span><span>Active</span></div>
+  <div class="stat-box"><span class="stat-num">{{ learner_report.inactive }}</span><span>Inactive</span></div>
+</div>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Batch</th><th>Learners Enrolled</th></tr></thead>
+  <tbody>
+    {% for name, count in learner_report.batches %}
+    <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+    {% else %}
+    <tr><td colspan="2" class="empty">No learners yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>2. Attendance Report</h2>
+<form method="GET" class="filter-row">
+  <input type="hidden" name="scroll" value="attendance">
+  <label style="margin:0; color:var(--text-dim); font-size:13px;">From</label>
+  <input type="date" name="att_from" value="{{ attendance_report.from }}">
+  <label style="margin:0; color:var(--text-dim); font-size:13px;">To</label>
+  <input type="date" name="att_to" value="{{ attendance_report.to }}">
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ attendance_report.total_learners }}</span><span>Total Learners</span></div>
+  <div class="stat-box"><span class="stat-num">{{ attendance_report.present_today }}</span><span>Present Today</span></div>
+  <div class="stat-box"><span class="stat-num">{{ attendance_report.days|length }}</span><span>Days With Activity (in range)</span></div>
+</div>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Date</th><th>Learners Present</th></tr></thead>
+  <tbody>
+    {% for d in attendance_report.days %}
+    <tr><td>{{ d.date }}</td><td>{{ d.present }}</td></tr>
+    {% else %}
+    <tr><td colspan="2" class="empty">No attendance in this range.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>3. Test Report — Learner Ranking</h2>
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ test_report.top_count }}</span><span>Top Performers</span></div>
+  <div class="stat-box"><span class="stat-num">{{ test_report.medium_count }}</span><span>Medium</span></div>
+  <div class="stat-box"><span class="stat-num">{{ test_report.low_count }}</span><span>Low — needs attention</span></div>
+</div>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Rank</th><th>Learner</th><th>Avg Score</th><th>Attempts</th><th>Tier</th></tr></thead>
+  <tbody>
+    {% for r in test_report.ranking %}
+    <tr>
+      <td>{{ r.rank }}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.avg_score }}</td>
+      <td>{{ r.attempts }}</td>
+      <td><span class="tier-badge tier-{{ r.tier }}">{{ r.tier }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="empty">No test scores yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

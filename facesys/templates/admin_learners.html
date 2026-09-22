@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}All Learners{% endblock %}
+{% block content %}
+<h1>All Learners</h1>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>LUID</th><th>Name</th><th>Roll No</th><th>Email</th><th>Center</th><th>City</th><th>Enrolled</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for l in learners %}
+    <tr>
+      <td>{{ l.luid }}</td>
+      <td>{{ l.name }}</td>
+      <td>{{ l.roll_no }}</td>
+      <td>{{ l.email or '-' }}</td>
+      <td>{{ centers.get(l.center_uid).centre_name if centers.get(l.center_uid) else l.center_uid }}</td>
+      <td>{{ centers.get(l.center_uid).city if centers.get(l.center_uid) else '-' }}</td>
+      <td>{{ l.enrolled_at }}</td>
+      <td><a class="btn btn-sm btn-secondary" href="{{ url_for('edit_learner_admin', luid=l.luid) }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="empty">No learners enrolled yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

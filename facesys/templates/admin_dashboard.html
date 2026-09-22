@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ centers|length }}</span><span>Centers</span></div>
+  <div class="stat-box"><span class="stat-num">{{ learners|length }}</span><span>Learners Enrolled</span></div>
+</div>
+
+<div class="actions-row">
+  <a class="btn" href="{{ url_for('add_center') }}">+ Add Center</a>
+  <a class="btn" href="{{ url_for('add_learner') }}">+ Add Learner</a>
+  <a class="btn btn-secondary" href="{{ url_for('bulk_add_centers') }}">Bulk Centers (CSV)</a>
+  <a class="btn btn-secondary" href="{{ url_for('bulk_add_learners') }}">Bulk Learners (CSV)</a>
+  <a class="btn btn-secondary" href="{{ url_for('list_learners_admin') }}">View All Learners</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_reports') }}">Attendance Reports</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_atlas') }}">Atlas Dump</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_test_dump') }}">Test Dump</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_nps_dump') }}">NPS Dump</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_attendance_dump') }}">Attendance Dump</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_feedback_responses') }}">Feedback Responses</a>
+</div>
+
+<h2>Centers</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Centre UID</th><th>Centre Name</th><th>City</th><th>Syncup Email</th>
+      <th>App Password</th><th>Added</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in centers %}
+    <tr>
+      <td>{{ c.center_uid }}</td>
+      <td>{{ c.centre_name }}</td>
+      <td>{{ c.city }}</td>
+      <td>{{ c.syncup_email }}</td>
+      <td>
+        {% if c.app_password %}
+        <span class="badge badge-ok">Configured</span>
+        {% else %}
+        <span class="badge badge-fail">Not set</span>
+        {% endif %}
+      </td>
+      <td>{{ c.created_at }}</td>
+      <td><a class="btn btn-sm btn-secondary" href="{{ url_for('edit_center', center_uid=c.center_uid) }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="empty">No centers yet. Add one to get started.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Recently Enrolled Learners</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>LUID</th><th>Name</th><th>Roll No</th><th>Center UID</th><th>Enrolled</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for l in learners[:10] %}
+    <tr>
+      <td>{{ l.luid }}</td>
+      <td>{{ l.name }}</td>
+      <td>{{ l.roll_no }}</td>
+      <td>{{ l.center_uid }}</td>
+      <td>{{ l.enrolled_at }}</td>
+      <td><a class="btn btn-sm btn-secondary" href="{{ url_for('edit_learner_admin', luid=l.luid) }}">Edit</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="empty">No learners enrolled yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

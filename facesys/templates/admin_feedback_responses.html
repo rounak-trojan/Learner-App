@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Feedback Responses{% endblock %}
+{% block content %}
+<h1>Feedback Responses</h1>
+<p class="hint">Learner-submitted feedback from the Feedback tab. Only visible to admin.</p>
+
+<form method="GET" class="filter-row">
+  <input type="date" name="from" value="{{ date_from }}" placeholder="From">
+  <input type="date" name="to" value="{{ date_to }}" placeholder="To">
+  <button type="submit" class="btn btn-sm">Filter</button>
+</form>
+
+<div class="stat-row">
+  <div class="stat-box"><span class="stat-num">{{ rows|length }}</span><span>Total Feedback</span></div>
+  <div class="stat-box">
+    <span class="stat-num">{{ "%.2f"|format(overall_avg) if overall_avg is not none else '-' }}</span>
+    <span>Average Rating (out of 5, all centers)</span>
+  </div>
+</div>
+
+<h2>Average Rating by Center</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Centre</th><th>Responses</th><th>Average Rating</th></tr></thead>
+  <tbody>
+    {% for c in center_averages %}
+    <tr>
+      <td>{{ c.centre_name or 'Unassigned' }}</td>
+      <td>{{ c.n }}</td>
+      <td>{{ "%.2f"|format(c.avg_rating) }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3" class="empty">No feedback in this range.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Individual Responses</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Date</th><th>Learner</th><th>Roll No</th><th>Centre</th><th>Rating</th>
+      <th>App &amp; Tech</th><th>Class Rec.</th><th>Staff</th><th>Material</th>
+      <th>Tests</th><th>Educators</th><th>Syllabus</th><th>Facilities</th><th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.submitted_at[:10] }}</td>
+      <td>{{ r.learner_name }}</td>
+      <td>{{ r.roll_no }}</td>
+      <td>{{ r.centre_name or '-' }}</td>
+      <td>{{ r.rating }} ★</td>
+      <td>{{ r.flag_app_tech or '-' }}</td>
+      <td>{{ r.flag_class_recording or '-' }}</td>
+      <td>{{ r.flag_staff_cooperation or '-' }}</td>
+      <td>{{ r.flag_study_material or '-' }}</td>
+      <td>{{ r.flag_tests or '-' }}</td>
+      <td>{{ r.flag_quality_educators or '-' }}</td>
+      <td>{{ r.flag_syllabus_progress or '-' }}</td>
+      <td>{{ r.flag_centre_facilities or '-' }}</td>
+      <td>{{ r.remark or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="14" class="empty">No feedback submitted yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

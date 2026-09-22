@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Attendance Reports{% endblock %}
+{% block content %}
+<h1>Attendance Reports</h1>
+
+<form method="GET" class="filter-row">
+  <select name="city">
+    <option value="">All Cities</option>
+    {% for c in cities %}
+    <option value="{{ c }}" {{ 'selected' if c == city }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <select name="center_uid">
+    <option value="">All Centers</option>
+    {% for c in centers %}
+    <option value="{{ c.center_uid }}" {{ 'selected' if c.center_uid == center_uid }}>{{ c.center_uid }} — {{ c.centre_name }}</option>
+    {% endfor %}
+  </select>
+  <input type="date" name="from" value="{{ date_from }}">
+  <input type="date" name="to" value="{{ date_to }}">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search learner name or roll no">
+  <button type="submit" class="btn btn-secondary">Filter</button>
+  <a class="btn" href="{{ url_for('admin_reports_export', **request.args) }}">Export CSV</a>
+</form>
+
+<div class="report-grid">
+  <div>
+    <h2>By City</h2>
+    <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>City</th><th>Learners</th><th>Present (period)</th></tr></thead>
+      <tbody>
+        {% for r in by_city %}
+        <tr>
+          <td>{{ r.city }}</td>
+          <td>{{ r.total_learners }}</td>
+          <td>{{ r.present_count }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="empty">No centers yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div>
+    <h2>By Center</h2>
+    <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>Center</th><th>City</th><th>Learners</th><th>Present</th></tr></thead>
+      <tbody>
+        {% for r in by_center %}
+        <tr>
+          <td>{{ r.centre_name }} <span class="pill">{{ r.center_uid }}</span></td>
+          <td>{{ r.city }}</td>
+          <td>{{ r.total_learners }}</td>
+          <td>{{ r.present_count }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">No centers yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<h2>Detailed Log {% if total_rows > rows|length %}<span class="pill">showing {{ rows|length }} of {{ total_rows }} — narrow filters or export CSV for the rest</span>{% endif %}</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr><th>City</th><th>Center</th><th>Name</th><th>Roll No</th><th>Type</th><th>Timestamp</th><th>Confidence</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.city }}</td>
+      <td>{{ row.centre_name }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.roll_no }}</td>
+      <td><span class="badge {{ 'badge-ok' if row.punch_type == 'login' else 'badge-fail' }}">{{ row.punch_type|capitalize }}</span></td>
+      <td>{{ row.ts }}</td>
+      <td>{{ "%.2f"|format(row.confidence) }}</td>
+      <td><span class="badge badge-{{ row.status }}">{{ row.status }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="empty">No attendance records match this filter.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Edit Center{% endblock %}
+{% block content %}
+<div class="form-wrap">
+  <h1>Edit Center</h1>
+  <p class="hint">Centre UID cannot be changed once created: <strong>{{ center.center_uid }}</strong> — added {{ center.created_at }}.</p>
+  <form method="POST">
+    <label>City</label>
+    <input type="text" name="city" value="{{ center.city }}" required>
+
+    <label>Centre Name</label>
+    <input type="text" name="centre_name" value="{{ center.centre_name }}" required>
+
+    <label>Syncup Email (login)</label>
+    <input type="email" name="syncup_email" value="{{ center.syncup_email }}" required>
+
+    <label>App Password (SMTP)</label>
+    <input type="text" name="app_password" value="{{ center.app_password or '' }}"
+           placeholder="e.g. abcd efgh ijkl mnop — leave blank to use the shared mail account">
+    <p class="hint" style="margin:6px 0 0;">
+      This is the Gmail/Workspace app password for <strong>{{ center.syncup_email }}</strong>. When set,
+      attendance emails for this center's learners are sent from this address using this password instead
+      of the system's default mail account.
+    </p>
+
+    <label>New Login Password</label>
+    <input type="password" name="new_password" minlength="6" placeholder="Leave blank to keep the current password">
+
+    <button type="submit">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

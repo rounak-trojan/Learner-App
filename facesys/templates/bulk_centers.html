@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Bulk Add Centers{% endblock %}
+{% block content %}
+<div class="form-wrap wide">
+  <h1>Bulk Add Centers</h1>
+  <div class="csv-help">
+    Required columns: <code>center_uid</code>, <code>city</code>, <code>centre_name</code>,
+    <code>syncup_email</code>, <code>password</code> (min 6 characters — this becomes the
+    center's login password). Optional column: <code>app_password</code> (SMTP app password —
+    when set, that center's attendance emails send from its own Syncup mailbox). Header row required,
+    any column order.
+    <br><br>
+    <a href="{{ url_for('center_csv_template') }}">Download sample CSV template</a>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label>CSV File</label>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload &amp; Process</button>
+  </form>
+</div>
+
+{% if results is not none %}
+<h2>Results</h2>
+<div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>Row</th><th>Center</th><th>Status</th><th>Detail</th></tr></thead>
+  <tbody>
+    {% for r in results %}
+    <tr>
+      <td>{{ r.row }}</td>
+      <td>{{ r.label }}</td>
+      <td><span class="badge {{ 'badge-ok' if r.ok else 'badge-fail' }}">{{ 'OK' if r.ok else 'FAILED' }}</span></td>
+      <td>{{ r.message }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty">No rows processed.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}
