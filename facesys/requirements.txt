@@ -1,10 +1,10 @@
-flask>=3.0
-opencv-contrib-python>=4.8
-numpy>=1.26,<2.0
-torch>=2.0
-torchvision>=0.15
-Pillow>=11.0.0
-facenet-pytorch>=2.5
-werkzeug>=3.0
-requests>=2.31
-gunicorn==23.0.0
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+Flask
+gunicorn
+numpy==1.26.4
+Pillow
+opencv-contrib-python
+torch
+torchvision
+facenet-pytorch
